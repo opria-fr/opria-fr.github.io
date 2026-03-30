@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>OPRIA — IA de détection des défauts d'exécution</title>
+  <meta name="description" content="OPRIA réduit le temps de création des réserves grâce à l'IA de détection automatique des défauts d'exécution sur chantier." />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,wght@0,300;0,400;0,500;0,700;1,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0d0f0e;
+      --bg2:      #0a0c0b;
+      --surface:  #181c17;
+      --border:   #252a23;
+      --orange:   #e8651a;
+      --orange2:  #f5813d;
+      --cream:    #f0ebe2;
+      --muted:    #7a8070;
+      --text:     #d8d4cc;
+      --white:    #ffffff;
+      --font-display: 'Bebas Neue', sans-serif;
+      --font-body:    'DM Sans', sans-serif;
+      --font-mono:    'DM Mono', monospace;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-body);
+      font-size: 16px;
+      line-height: 1.65;
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: '';
+      position: fixed; inset: 0;
+      background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+      opacity: 0.028;
+      pointer-events: none;
+      z-index: 9999;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+      display: flex; align-items: center; justify-content: space-between;
+      padding: 0 clamp(1.5rem, 5vw, 4rem);
+      height: 64px;
+      background: rgba(13,15,14,0.88);
+      backdrop-filter: blur(14px);
+      border-bottom: 1px solid var(--border);
+    }
+    .nav-logo {
+      font-family: var(--font-display);
+      font-size: 1.8rem; letter-spacing: 0.12em;
+      color: var(--white); text-decoration: none;
+    }
+    .nav-logo span { color: var(--orange); }
+    .nav-links { display: flex; gap: 2rem; list-style: none; }
+    .nav-links a {
+      font-size: 0.78rem; font-weight: 500; letter-spacing: 0.1em;
+      text-transform: uppercase; color: var(--muted);
+      text-decoration: none; transition: color 0.2s;
+    }
+    .nav-links a:hover { color: var(--cream); }
+    .nav-cta {
+      background: var(--orange); color: var(--white) !important;
+      padding: 0.45rem 1.2rem !important; border-radius: 3px;
+    }
+    .nav-cta:hover { background: var(--orange2); color: var(--white) !important; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100vh;
+      display: grid; grid-template-columns: 1fr 1fr;
+      align-items: center;
+      padding: 0 clamp(1.5rem, 5vw, 4rem);
+      padding-top: 64px; gap: 4rem;
+      position: relative; overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute; right: -10%; top: 50%;
+      transform: translateY(-50%);
+      width: 55vw; height: 55vw;
+      background: radial-gradient(ellipse at center, rgba(232,101,26,0.07) 0%, transparent 65%);
+      pointer-events: none;
+    }
+
+    .hero-tag {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      font-family: var(--font-mono); font-size: 0.72rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--orange); background: rgba(232,101,26,0.1);
+      border: 1px solid rgba(232,101,26,0.25);
+      padding: 0.35rem 0.85rem; border-radius: 2px;
+      margin-bottom: 1.5rem;
+      animation: fadeUp 0.6s ease both;
+    }
+    .hero-tag::before {
+      content: ''; width: 6px; height: 6px;
+      border-radius: 50%; background: var(--orange);
+      animation: blink 2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
+
+    .hero-title {
+      font-family: var(--font-display);
+      font-size: clamp(3.2rem, 6.5vw, 6rem);
+      line-height: 0.95; letter-spacing: 0.03em;
+      color: var(--white);
+      animation: fadeUp 0.7s 0.1s ease both;
+    }
+    .hero-title em { font-style: normal; color: var(--orange); }
+
+    .hero-sub {
+      margin-top: 1.5rem;
+      font-size: 1.2rem; font-weight: 300;
+      color: var(--text); max-width: 44ch;
+      animation: fadeUp 0.7s 0.2s ease both;
+    }
+
+    .hero-actions {
+      margin-top: 2.5rem;
+      display: flex; gap: 1rem; flex-wrap: wrap;
+      animation: fadeUp 0.7s 0.3s ease both;
+    }
+
+    .btn-primary {
+      display: inline-flex; align-items: center; gap: 0.5rem;
+      background: var(--orange); color: var(--white);
+      font-family: var(--font-body); font-size: 0.9rem;
+      font-weight: 600; letter-spacing: 0.04em;
+      padding: 0.85rem 1.8rem; border-radius: 3px;
+      text-decoration: none; border: none; cursor: pointer;
+      transition: background 0.2s, transform 0.15s;
+    }
+    .btn-primary:hover { background: var(--orange2); transform: translateY(-1px); }
+
+    /* ── BLUEPRINT CARD ── */
+    .hero-visual {
+      position: relative;
+      animation: fadeIn 1s 0.4s ease both;
+    }
+    .blueprint-card {
+      background: #06101c;
+      border: 1px solid rgba(200,223,245,0.14);
+      border-radius: 8px; padding: 1.5rem;
+      position: relative; overflow: hidden;
+    }
+    .blueprint-card::before {
+      content: '';
+      position: absolute; top: 0; left: 0; right: 0; height: 2px;
+      background: linear-gradient(90deg, transparent, rgba(200,223,245,0.4), transparent);
+    }
+    .blueprint-canvas {
+      width: 100%; aspect-ratio: 16/10;
+      position: relative; overflow: hidden; border-radius: 4px;
+      background: #050d17;
+    }
+    .bp-svg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+    }
+    .bp-line-svg {
+      position: absolute; inset: 0; width: 100%; height: 100%;
+      pointer-events: none;
+    }
+    .bp-ping {
+      position: absolute;
+      width: 10px; height: 10px; border-radius: 50%;
+      background: var(--orange);
+      transform: translate(-50%, -50%);
+      opacity: 0; transition: opacity 0.3s ease;
+      pointer-events: none;
+    }
+    .bp-ping::after {
+      content: '';
+      position: absolute; inset: -7px; border-radius: 50%;
+      border: 2px solid var(--orange);
+      animation: ripple 1.6s ease-out infinite;
+    }
+    @keyframes ripple {
+      0%   { transform: scale(0.4); opacity: 0.9; }
+      100% { transform: scale(2.4); opacity: 0; }
+    }
+    .bp-reserve {
+      position: absolute;
+      background: rgba(232,101,26,0.13);
+      border: 1px solid rgba(232,101,26,0.7);
+      border-radius: 3px; padding: 3px 8px;
+      font-family: var(--font-mono); font-size: 0.58rem;
+      color: var(--orange); white-space: nowrap;
+      opacity: 0; transition: opacity 0.35s ease;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+    }
+    .bp-stats {
+      margin-top: 1.2rem;
+      display: flex; justify-content: space-between;
+      border-top: 1px solid rgba(200,223,245,0.07);
+      padding-top: 1rem;
+    }
+    .bp-stat { text-align: center; }
+    .bp-stat .v {
+      display: block; font-family: var(--font-display);
+      font-size: 1.5rem; letter-spacing: 0.06em;
+      color: var(--orange); line-height: 1;
+    }
+    .bp-stat .l {
+      font-size: 0.62rem; color: rgba(200,223,245,0.35);
+      text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.2rem;
+    }
+
+    /* ── SECTIONS ── */
+    section { padding: clamp(4rem, 10vw, 8rem) clamp(1.5rem, 5vw, 4rem); }
+    .section-tag {
+      font-family: var(--font-mono); font-size: 0.72rem;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--orange); margin-bottom: 0.8rem;
+    }
+    .section-title {
+      font-family: var(--font-display);
+      font-size: clamp(2.5rem, 5vw, 4rem);
+      line-height: 1; letter-spacing: 0.04em;
+      color: var(--white); margin-bottom: 1.2rem;
+    }
+    .section-lead {
+      font-size: 1.05rem; font-weight: 300;
+      color: var(--text); max-width: 58ch; line-height: 1.7;
+    }
+    .section-sub {
+      font-size: 0.88rem; font-weight: 300;
+      color: var(--muted); max-width: 58ch; line-height: 1.75; margin-top: 1rem;
+    }
+    .divider { height: 1px; background: var(--border); margin: 0 clamp(1.5rem, 5vw, 4rem); }
+
+    /* ── TWO COL ── */
+    .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
+
+    .defects-list { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+    .defect-tag {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      font-size: 0.82rem; font-weight: 500; color: var(--cream);
+      background: rgba(232,101,26,0.1); border: 1px solid rgba(232,101,26,0.2);
+      padding: 0.4rem 0.9rem; border-radius: 2px; letter-spacing: 0.04em;
+    }
+    .defect-tag::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--orange); }
+
+    /* ── STEPS ── */
+    .steps { margin-top: 3rem; display: flex; flex-direction: column; }
+    .step {
+      display: grid; grid-template-columns: 80px 1fr;
+      gap: 2rem; padding: 2rem 0; border-bottom: 1px solid var(--border);
+      opacity: 0; transform: translateX(-20px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .step.visible { opacity: 1; transform: none; }
+    .step:last-child { border-bottom: none; }
+    .step-num {
+      font-family: var(--font-display); font-size: 3.5rem;
+      color: var(--border); line-height: 1; transition: color 0.3s;
+    }
+    .step:hover .step-num { color: var(--orange); }
+    .step-content h3 { font-size: 1.1rem; font-weight: 700; color: var(--cream); margin-bottom: 0.5rem; }
+    .step-content p { font-size: 0.9rem; color: var(--muted); line-height: 1.65; max-width: 55ch; }
+
+    /* ── CARDS ── */
+    .cards-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 6px; padding: 2rem; position: relative; overflow: hidden;
+      transition: border-color 0.25s, transform 0.2s;
+      opacity: 0; transform: translateY(24px);
+    }
+    .card.visible { opacity: 1; transform: none; }
+    .card:hover { border-color: rgba(232,101,26,0.4); transform: translateY(-3px); }
+    .card::before {
+      content: ''; position: absolute; top: 0; left: 0;
+      width: 3px; height: 100%; background: var(--orange);
+      opacity: 0; transition: opacity 0.25s;
+    }
+    .card:hover::before { opacity: 1; }
+    .card-icon { font-size: 1.6rem; margin-bottom: 1rem; display: block; }
+    .card-title { font-weight: 700; font-size: 1rem; color: var(--cream); margin-bottom: 0.6rem; }
+    .card-text { font-size: 0.88rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── ÉQUIPE ── */
+    .team-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2rem; margin-top: 3rem; }
+    .team-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 8px; overflow: hidden;
+      transition: border-color 0.25s, transform 0.2s;
+      opacity: 0; transform: translateY(24px);
+    }
+    .team-card.visible { opacity: 1; transform: none; }
+    .team-card:hover { border-color: rgba(232,101,26,0.35); transform: translateY(-4px); }
+    .team-photo {
+      width: 100%; aspect-ratio: 1/1;
+      position: relative; overflow: hidden;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .team-photo-placeholder {
+      width: 100%; height: 100%;
+      display: flex; align-items: center; justify-content: center;
+      background: linear-gradient(135deg, #0e1410 0%, #1a2018 100%);
+    }
+    .team-photo-initials {
+      font-family: var(--font-display); font-size: 3.5rem;
+      letter-spacing: 0.1em; color: var(--border);
+    }
+    .team-photo::after {
+      content: ''; position: absolute; bottom: 0; left: 0; right: 0;
+      height: 40%; background: linear-gradient(to top, var(--surface), transparent);
+    }
+    .team-info { padding: 1.5rem; }
+    .team-role {
+      font-family: var(--font-mono); font-size: 0.68rem;
+      letter-spacing: 0.16em; text-transform: uppercase;
+      color: var(--orange); margin-bottom: 0.4rem;
+    }
+    .team-name { font-weight: 700; font-size: 1.1rem; color: var(--cream); margin-bottom: 0.6rem; }
+    .team-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── CONTACT ── */
+    #contact { background: var(--surface); border-top: 1px solid var(--border); }
+    .contact-inner { max-width: 760px; }
+    .contact-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
+    .contact-card {
+      background: var(--bg); border: 1px solid var(--border);
+      border-radius: 6px; padding: 1.8rem; transition: border-color 0.2s;
+    }
+    .contact-card:hover { border-color: rgba(232,101,26,0.4); }
+    .contact-card .role {
+      font-family: var(--font-mono); font-size: 0.68rem;
+      letter-spacing: 0.14em; text-transform: uppercase;
+      color: var(--orange); margin-bottom: 0.5rem;
+    }
+    .contact-card .name { font-weight: 700; font-size: 1.05rem; color: var(--cream); margin-bottom: 0.8rem; }
+    .contact-card a { display: block; font-size: 0.84rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    .contact-card a:hover { color: var(--orange); }
+
+    /* ── FOOTER ── */
+    footer {
+      padding: 2rem clamp(1.5rem, 5vw, 4rem);
+      border-top: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem;
+    }
+    .footer-logo { font-family: var(--font-display); font-size: 1.4rem; letter-spacing: 0.1em; color: var(--muted); }
+    .footer-logo span { color: var(--orange); }
+    footer p { font-size: 0.78rem; color: var(--muted); }
+
+    /* ── ANIMATIONS ── */
+    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
+    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+    @keyframes drawLine { to { stroke-dashoffset: 0; } }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 768px) {
+      .hero { grid-template-columns: 1fr; padding-top: 80px; }
+      .hero-visual { display: none; }
+      .two-col { grid-template-columns: 1fr; gap: 3rem; }
+      .team-grid { grid-template-columns: 1fr; max-width: 360px; }
+      .nav-links { display: none; }
+      .step { grid-template-columns: 60px 1fr; gap: 1rem; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- NAV -->
+  <nav>
+    <a href="#" class="nav-logo">OPR<span>IA</span></a>
+    <ul class="nav-links">
+      <li><a href="#solution">Solution</a></li>
+      <li><a href="#comment">Fonctionnement</a></li>
+      <li><a href="#equipe">Équipe</a></li>
+      <li><a href="#contact" class="nav-cta">Nous contacter</a></li>
+    </ul>
+  </nav>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="hero-tag">Startup BTP × IA</div>
+      <h1 class="hero-title">
+        Détection des<br/>défauts<br/>d'<em>exécution</em><br/>sur le chantier.
+      </h1>
+      <p class="hero-sub">Réduire le temps de création des réserves.</p>
+      <div class="hero-actions">
+        <a href="#contact" class="btn-primary">Prendre contact →</a>
+      </div>
+    </div>
+
+    <div class="hero-visual">
+      <div class="blueprint-card">
+        <div class="blueprint-canvas" id="bpCanvas">
+
+          <!-- Plan 2D blueprint SVG -->
+          <svg class="bp-svg" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" fill="none">
+            <defs>
+              <pattern id="bpgrid" width="20" height="20" patternUnits="userSpaceOnUse">
+                <path d="M20 0L0 0 0 20" stroke="rgba(200,223,245,0.06)" stroke-width="0.5"/>
+              </pattern>
+            </defs>
+            <rect width="480" height="300" fill="url(#bpgrid)"/>
+            <!-- Enveloppe extérieure -->
+            <rect x="40" y="28" width="400" height="244" stroke="rgba(200,223,245,0.5)" stroke-width="2.5"/>
+            <!-- Partition horizontale -->
+            <line x1="40" y1="152" x2="440" y2="152" stroke="rgba(200,223,245,0.22)" stroke-width="1.5"/>
+            <!-- Partition verticale gauche -->
+            <line x1="180" y1="28" x2="180" y2="152" stroke="rgba(200,223,245,0.22)" stroke-width="1.5"/>
+            <!-- Partition verticale droite haut -->
+            <line x1="320" y1="28" x2="320" y2="152" stroke="rgba(200,223,245,0.22)" stroke-width="1.5"/>
+            <!-- Partition verticale bas -->
+            <line x1="240" y1="152" x2="240" y2="272" stroke="rgba(200,223,245,0.22)" stroke-width="1.5"/>
+            <!-- Portes -->
+            <path d="M160 28 Q160 48 180 48" stroke="rgba(200,223,245,0.35)" stroke-width="1" fill="none"/>
+            <path d="M300 28 Q300 48 320 48" stroke="rgba(200,223,245,0.35)" stroke-width="1" fill="none"/>
+            <path d="M220 152 Q220 172 240 172" stroke="rgba(200,223,245,0.35)" stroke-width="1" fill="none"/>
+            <!-- Labels -->
+            <text x="110" y="96" font-family="monospace" font-size="7" fill="rgba(200,223,245,0.28)" text-anchor="middle">BUREAU A</text>
+            <text x="250" y="96" font-family="monospace" font-size="7" fill="rgba(200,223,245,0.28)" text-anchor="middle">SALLE RÉUNION</text>
+            <text x="380" y="96" font-family="monospace" font-size="7" fill="rgba(200,223,245,0.28)" text-anchor="middle">BUREAU B</text>
+            <text x="140" y="218" font-family="monospace" font-size="7" fill="rgba(200,223,245,0.28)" text-anchor="middle">COULOIR</text>
+            <text x="340" y="218" font-family="monospace" font-size="7" fill="rgba(200,223,245,0.28)" text-anchor="middle">BUREAU C</text>
+            <!-- Cote -->
+            <line x1="40" y1="16" x2="440" y2="16" stroke="rgba(200,223,245,0.15)" stroke-width="0.8"/>
+            <line x1="40" y1="12" x2="40" y2="20" stroke="rgba(200,223,245,0.15)" stroke-width="0.8"/>
+            <line x1="440" y1="12" x2="440" y2="20" stroke="rgba(200,223,245,0.15)" stroke-width="0.8"/>
+            <text x="240" y="11" font-family="monospace" font-size="6" fill="rgba(200,223,245,0.22)" text-anchor="middle">24.00 m</text>
+          </svg>
+
+          <!-- Line overlay SVG -->
+          <svg class="bp-line-svg" id="bpLineSvg" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg"></svg>
+
+          <!-- Ping & Reserve (absolute, driven by JS) -->
+          <div class="bp-ping" id="bpPing"></div>
+          <div class="bp-reserve" id="bpReserve"></div>
+        </div>
+
+        <div class="bp-stats">
+          <div class="bp-stat"><span class="v">−45%</span><span class="l">temps OPR</span></div>
+          <div class="bp-stat"><span class="v">75%</span><span class="l">précision</span></div>
+          <div class="bp-stat"><span class="v">6</span><span class="l">défauts types</span></div>
+          <div class="bp-stat"><span class="v">15k</span><span class="l">photos annotées</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CONTEXTE & OPPORTUNITÉ -->
+  <section id="solution">
+    <div class="two-col">
+      <div>
+        <p class="section-tag">Contexte</p>
+        <h2 class="section-title">Les OPR,<br/>une étape clé</h2>
+        <p class="section-lead">
+          Sur les grands chantiers, ce sont des milliers de réserves qui doivent être localisées sur plan, photographiées, décrites et assignées au bon sous-traitant.
+        </p>
+        <p class="section-sub">
+          Ce sont les Opérations Préalables à la Réception — une étape incontournable de chaque livraison. Avec les logiciels actuels, créer une réserve prend entre 15 et 30 secondes. Sur un chantier de 30 000 réserves, c'est <strong style="color:var(--cream)">150 heures</strong> passées exclusivement à annoter des défauts.
+        </p>
+      </div>
+      <div>
+        <p class="section-tag">Opportunité</p>
+        <h2 class="section-title">6 défauts récurrents,<br/>70% des réserves.</h2>
+        <p class="section-lead">
+          Ces défauts sont identiques d'un chantier à l'autre — toujours décrits de la même façon, toujours assignés aux mêmes sous-traitants.
+        </p>
+        <div class="defects-list">
+          <span class="defect-tag">Taches</span>
+          <span class="defect-tag">Faux plafond</span>
+          <span class="defect-tag">Joints à refaire</span>
+          <span class="defect-tag">Impacts</span>
+          <span class="defect-tag">Nettoyage</span>
+          <span class="defect-tag">Reprise de peinture</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- COMMENT ÇA MARCHE -->
+  <section id="comment">
+    <p class="section-tag">Notre technologie</p>
+    <h2 class="section-title">Comment ça marche</h2>
+    <p class="section-lead">
+      OPRIA s'intègre aux logiciels de suivi de chantier existants comme une brique IA dédiée à la détection automatique des défauts.
+    </p>
+    <div class="steps">
+      <div class="step">
+        <div class="step-num">01</div>
+        <div class="step-content">
+          <h3>Un dataset terrain unique</h3>
+          <p>Grâce à notre présence sur le terrain, nous continuons de constituer un dataset de photos d'OPR annotées, issu de 6 typologies de défauts et provenant de chantiers variés. Chaque image est labellisée selon une classification métier et annotée avec des bounding boxes.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">02</div>
+        <div class="step-content">
+          <h3>Détection visuelle par IA</h3>
+          <p>Le modèle apprend à identifier des motifs visuels caractéristiques et à distinguer automatiquement les défauts des non-défauts. Objectif : détecter <strong style="color:var(--cream)">75% des défauts courants avec 75% de précision</strong>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">03</div>
+        <div class="step-content">
+          <h3>Description et assignation automatiques</h3>
+          <p>OPRIA génère automatiquement une description standardisée du défaut et l'assigne au bon sous-traitant, sans intervention manuelle. Le temps consacré aux réserves est réduit de <strong style="color:var(--cream)">45%</strong>.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num">04</div>
+        <div class="step-content">
+          <h3>Intégration aux outils existants</h3>
+          <p>OPRIA ne remplace pas les logiciels de suivi (Procore, Archipad, OpenSpace…) — elle s'y intègre comme une couche d'intelligence dédiée aux OPR, là où ces solutions n'en ont aucune.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- POURQUOI OPRIA -->
+  <section>
+    <p class="section-tag">Pourquoi OPRIA</p>
+    <h2 class="section-title">Une solution<br/>conçue terrain</h2>
+    <div class="cards-grid">
+      <div class="card">
+        <span class="card-icon">📐</span>
+        <div class="card-title">Expertise métier</div>
+        <p class="card-text">Notre dataset est constitué directement sur le terrain, avec des annotations métier réalisées par des professionnels du BTP. Pas de données génériques.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">⚡</span>
+        <div class="card-title">Gain de temps immédiat</div>
+        <p class="card-text">Réduction de 45% du temps de réserve dès le déploiement. Sur un chantier de 30 000 réserves, c'est plus de 60 heures économisées.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🔌</span>
+        <div class="card-title">Architecture plug-and-play</div>
+        <p class="card-text">OPRIA s'intègre comme une API aux logiciels existants. Pas de migration, pas de changement d'outil pour vos équipes terrain.</p>
+      </div>
+      <div class="card">
+        <span class="card-icon">🎯</span>
+        <div class="card-title">Précision ciblée</div>
+        <p class="card-text">75% des défauts les plus courants détectés avec 75% de précision. Un objectif réaliste, calibré sur les besoins réels du secteur.</p>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- ÉQUIPE -->
+  <section id="equipe">
+    <p class="section-tag">L'équipe fondatrice</p>
+    <h2 class="section-title">Des profils<br/>complémentaires</h2>
+    <p class="section-lead">
+      OPRIA est portée par une équipe alliant expertise terrain BTP, ingénierie IA et vision produit.
+    </p>
+    <div class="team-grid">
+      <div class="team-card">
+        <div class="team-photo">
+          <div class="team-photo-placeholder">
+            <img src="photo-ceo.png" alt="Léo Van Nieuwenhove" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+        </div>
+        <div class="team-info">
+          <div class="team-role">Chief Executive Officer</div>
+          <div class="team-name">Léo Van Nieuwenhove</div><!-- ← remplace ici -->
+          <p class="team-desc">Vision stratégique, développement commercial et relations investisseurs. Pilote la croissance d'OPRIA et les partenariats avec les acteurs du BTP.</p>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-photo">
+          <div class="team-photo-placeholder">
+            <img src="photo-cto.png" alt="Gabriel Desportes" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+        </div>
+        <div class="team-info">
+          <div class="team-role">Chief Technology Officer</div>
+          <div class="team-name">Gabriel Desportes</div><!-- ← remplace ici -->
+          <p class="team-desc">Architecture technique, modèles de détection et infrastructure IA. Responsable du dataset, de l'entraînement et de l'intégration API.</p>
+        </div>
+      </div>
+      <div class="team-card">
+        <div class="team-photo">
+          <div class="team-photo-placeholder">
+            <img src="photo-cpo.png" alt="Léo Kratschmar" style="width:100%;height:100%;object-fit:cover;">
+          </div>
+        </div>
+        <div class="team-info">
+          <div class="team-role">Chief Product Officer</div>
+          <div class="team-name">Léo Kratschmar</div><!-- ← remplace ici -->
+          <p class="team-desc">Expérience utilisateur, roadmap produit et alignement avec les besoins terrain. Garantit qu'OPRIA reste au plus près des architectes et chefs de chantier.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="divider"></div>
+
+  <!-- CONTACT -->
+  <section id="contact">
+    <div class="contact-inner">
+      <p class="section-tag">Contact</p>
+      <h2 class="section-title">Parlons<br/>de votre projet</h2>
+      <p class="section-lead">
+        Vous êtes investisseur, éditeur de logiciel BTP, cabinet d'architecture ou entreprise générale ? Nous serions ravis d'échanger sur la manière dont OPRIA peut s'intégrer à votre activité.
+      </p>
+      <div class="contact-cards">
+        <div class="contact-card">
+          <div class="role">Co-fondateurs</div>
+          <div class="name">Équipe OPRIA</div>
+          <a href="mailto:contact@opria.fr">contact@opria.fr</a>
+        </div>
+        <div class="contact-card">
+          <div class="role">Partenariats & Investisseurs</div>
+          <div class="name">Business Development</div>
+          <a href="mailto:invest@opria.fr">invest@opria.fr</a>
+        </div>
+        <div class="contact-card">
+          <div class="role">Intégration technique</div>
+          <div class="name">API & Solutions</div>
+          <a href="mailto:tech@opria.fr">tech@opria.fr</a>
+        </div>
+      </div>
+      <div style="margin-top:2.5rem;">
+        <a href="mailto:contact@opria.fr" class="btn-primary">Envoyer un message →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-logo">OPR<span>IA</span></div>
+    <p>© 2026 OPRIA — L'IA de détection des défauts d'exécution</p>
+    <p style="font-size:0.75rem; color:var(--border);">Paris · France</p>
+  </footer>
+
+  <script>
+    /* ════════════════════════════════
+       BLUEPRINT ANIMATION
+    ════════════════════════════════ */
+    (function () {
+      const canvas  = document.getElementById('bpCanvas');
+      const ping    = document.getElementById('bpPing');
+      const reserve = document.getElementById('bpReserve');
+      const lineSvg = document.getElementById('bpLineSvg');
+
+      // Each defect: ping position (%), reserve label position (%), label text
+      const defects = [
+        { px:22, py:32, rx:55, ry:20, label:'Reprise peinture' },
+        { px:68, py:58, rx:35, ry:72, label:'Joint à refaire'  },
+        { px:50, py:78, rx:78, ry:88, label:'Tache · Bureau C' },
+        { px:15, py:65, rx:48, ry:52, label:'Impact'           },
+        { px:80, py:35, rx:52, ry:62, label:'Nettoyage'        },
+        { px:38, py:45, rx:72, ry:28, label:'Faux plafond'     },
+      ];
+
+      let idx = 0;
+
+      function pct(v, total) { return (v / 100) * total; }
+
+      function cycle() {
+        const d  = defects[idx % defects.length];
+        const W  = canvas.offsetWidth;
+        const H  = canvas.offsetHeight;
+
+        // ── 1. Place & show ping ──
+        ping.style.left    = pct(d.px, W) + 'px';
+        ping.style.top     = pct(d.py, H) + 'px';
+        ping.style.opacity = '1';
+
+        // ── 2. Draw animated line after 350ms ──
+        setTimeout(() => {
+          const vW = 480, vH = 300;
+          const x1 = pct(d.px, vW), y1 = pct(d.py, vH);
+          const x2 = pct(d.rx, vW), y2 = pct(d.ry, vH);
+          const len = Math.hypot(x2 - x1, y2 - y1);
+
+          lineSvg.innerHTML = `
+            <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
+              stroke="rgba(232,101,26,0.75)" stroke-width="1.3"
+              stroke-dasharray="${len}" stroke-dashoffset="${len}"
+              style="animation: drawLine 0.45s ease forwards;"
+            />
+            <circle cx="${x1}" cy="${y1}" r="3" fill="none"
+              stroke="rgba(232,101,26,0.5)" stroke-width="1"/>`;
+        }, 350);
+
+        // ── 3. Show reserve label after 850ms ──
+        setTimeout(() => {
+          reserve.textContent  = '⚑ ' + d.label;
+          reserve.style.left   = pct(d.rx, W) + 'px';
+          reserve.style.top    = pct(d.ry, H) + 'px';
+          reserve.style.opacity = '1';
+        }, 850);
+
+        // ── 4. Fade out & move to next after 2.8s ──
+        setTimeout(() => {
+          ping.style.opacity    = '0';
+          reserve.style.opacity = '0';
+          lineSvg.innerHTML     = '';
+          idx++;
+        }, 2800);
+      }
+
+      // Kick off
+      setTimeout(cycle, 900);
+      setInterval(cycle, 3400);
+    })();
+
+    /* ════════════════════════════════
+       SCROLL REVEAL
+    ════════════════════════════════ */
+    const io = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          setTimeout(() => e.target.classList.add('visible'), Number(e.target.dataset.delay || 0));
+        }
+      });
+    }, { threshold: 0.12 });
+
+    document.querySelectorAll('.card').forEach((el, i) => { el.dataset.delay = i * 100; io.observe(el); });
+    document.querySelectorAll('.step').forEach((el, i) => { el.dataset.delay = i * 120; io.observe(el); });
+    document.querySelectorAll('.team-card').forEach((el, i) => { el.dataset.delay = i * 150; io.observe(el); });
+  </script>
+
+</body>
+</html>

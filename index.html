@@ -331,20 +331,48 @@
     /* ── CONTACT ── */
     #contact { background: var(--surface); border-top: 1px solid var(--border); }
     .contact-inner { max-width: 760px; }
-    .contact-cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; margin-top: 3rem; }
-    .contact-card {
-      background: var(--bg); border: 1px solid var(--border);
-      border-radius: 6px; padding: 1.8rem; transition: border-color 0.2s;
+
+    /* ── CHIFFRES CLÉS ── */
+    .kpi-band {
+      background: var(--surface);
+      border-top: 1px solid var(--border);
+      border-bottom: 1px solid var(--border);
+      padding: 2.8rem clamp(1.5rem, 5vw, 4rem);
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 1rem;
     }
-    .contact-card:hover { border-color: rgba(232,101,26,0.4); }
-    .contact-card .role {
+    .kpi-item {
+      display: flex; flex-direction: column; align-items: center;
+      text-align: center; padding: 1.5rem 1rem;
+      border-right: 1px solid var(--border);
+      opacity: 0; transform: translateY(16px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .kpi-item:last-child { border-right: none; }
+    .kpi-item.visible { opacity: 1; transform: none; }
+    .kpi-value {
+      font-family: var(--font-display);
+      font-size: clamp(2.4rem, 4vw, 3.5rem);
+      line-height: 1; letter-spacing: 0.04em;
+      color: var(--orange);
+    }
+    .kpi-label {
+      margin-top: 0.5rem;
       font-family: var(--font-mono); font-size: 0.68rem;
       letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--orange); margin-bottom: 0.5rem;
+      color: var(--muted);
     }
-    .contact-card .name { font-weight: 700; font-size: 1.05rem; color: var(--cream); margin-bottom: 0.8rem; }
-    .contact-card a { display: block; font-size: 0.84rem; color: var(--muted); text-decoration: none; transition: color 0.2s; }
-    .contact-card a:hover { color: var(--orange); }
+    .kpi-desc {
+      margin-top: 0.4rem;
+      font-size: 0.8rem; color: var(--text); line-height: 1.4; max-width: 18ch;
+    }
+    @media (max-width: 768px) {
+      .kpi-band { grid-template-columns: repeat(2, 1fr); }
+      .kpi-item:nth-child(2) { border-right: none; }
+      .kpi-item { border-right: none; border-bottom: 1px solid var(--border); }
+      .kpi-item:last-child { border-bottom: none; }
+    }
 
     /* ── FOOTER ── */
     footer {
@@ -402,58 +430,227 @@
       <div class="blueprint-card">
         <div class="blueprint-canvas" id="bpCanvas">
 
-          <!-- Plan 2D blueprint SVG -->
-          <svg class="bp-svg" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" fill="none">
-            <defs>
-              <pattern id="bpgrid" width="20" height="20" patternUnits="userSpaceOnUse">
-                <path d="M20 0L0 0 0 20" stroke="rgba(200,223,245,0.06)" stroke-width="0.5"/>
-              </pattern>
-            </defs>
-            <rect width="480" height="300" fill="url(#bpgrid)"/>
-            <!-- Enveloppe extérieure -->
-            <rect x="40" y="28" width="400" height="244" stroke="rgba(200,223,245,0.5)" stroke-width="2.5"/>
-            <!-- Partition horizontale -->
-            <line x1="40" y1="152" x2="440" y2="152" stroke="rgba(200,223,245,0.22)" stroke-width="1.5"/>
-            <!-- Partition verticale gauche -->
-            <line x1="180" y1="28" x2="180" y2="152" stroke="rgba(200,223,245,0.22)" stroke-width="1.5"/>
-            <!-- Partition verticale droite haut -->
-            <line x1="320" y1="28" x2="320" y2="152" stroke="rgba(200,223,245,0.22)" stroke-width="1.5"/>
-            <!-- Partition verticale bas -->
-            <line x1="240" y1="152" x2="240" y2="272" stroke="rgba(200,223,245,0.22)" stroke-width="1.5"/>
-            <!-- Portes -->
-            <path d="M160 28 Q160 48 180 48" stroke="rgba(200,223,245,0.35)" stroke-width="1" fill="none"/>
-            <path d="M300 28 Q300 48 320 48" stroke="rgba(200,223,245,0.35)" stroke-width="1" fill="none"/>
-            <path d="M220 152 Q220 172 240 172" stroke="rgba(200,223,245,0.35)" stroke-width="1" fill="none"/>
-            <!-- Labels -->
-            <text x="110" y="96" font-family="monospace" font-size="7" fill="rgba(200,223,245,0.28)" text-anchor="middle">BUREAU A</text>
-            <text x="250" y="96" font-family="monospace" font-size="7" fill="rgba(200,223,245,0.28)" text-anchor="middle">SALLE RÉUNION</text>
-            <text x="380" y="96" font-family="monospace" font-size="7" fill="rgba(200,223,245,0.28)" text-anchor="middle">BUREAU B</text>
-            <text x="140" y="218" font-family="monospace" font-size="7" fill="rgba(200,223,245,0.28)" text-anchor="middle">COULOIR</text>
-            <text x="340" y="218" font-family="monospace" font-size="7" fill="rgba(200,223,245,0.28)" text-anchor="middle">BUREAU C</text>
-            <!-- Cote -->
-            <line x1="40" y1="16" x2="440" y2="16" stroke="rgba(200,223,245,0.15)" stroke-width="0.8"/>
-            <line x1="40" y1="12" x2="40" y2="20" stroke="rgba(200,223,245,0.15)" stroke-width="0.8"/>
-            <line x1="440" y1="12" x2="440" y2="20" stroke="rgba(200,223,245,0.15)" stroke-width="0.8"/>
-            <text x="240" y="11" font-family="monospace" font-size="6" fill="rgba(200,223,245,0.22)" text-anchor="middle">24.00 m</text>
-          </svg>
+          <!-- ANIMATION : photo → réserve via IA -->
+          <!-- Phase 1 : Cadre photo avec défaut -->
+          <div id="bpPhoto" style="
+            position:absolute;inset:0;
+            display:flex;align-items:center;justify-content:center;
+            background:#050d17;
+            opacity:0;transition:opacity 0.5s ease;
+          ">
+            <!-- Fond "photo de chantier" stylisé -->
+            <svg width="100%" height="100%" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" fill="none" style="position:absolute;inset:0;">
+              <!-- Sol béton -->
+              <rect width="480" height="300" fill="#0a1218"/>
+              <!-- Texture béton -->
+              <line x1="0" y1="200" x2="480" y2="200" stroke="rgba(200,220,240,0.06)" stroke-width="1"/>
+              <line x1="0" y1="220" x2="480" y2="220" stroke="rgba(200,220,240,0.04)" stroke-width="0.5"/>
+              <!-- Mur -->
+              <rect x="0" y="0" width="480" height="200" fill="#0e1820"/>
+              <!-- Joints de mur horizontaux -->
+              <line x1="0" y1="65" x2="480" y2="65" stroke="rgba(200,220,240,0.05)" stroke-width="0.8"/>
+              <line x1="0" y1="130" x2="480" y2="130" stroke="rgba(200,220,240,0.05)" stroke-width="0.8"/>
+              <!-- Joints verticaux décalés -->
+              <line x1="120" y1="0" x2="120" y2="65" stroke="rgba(200,220,240,0.04)" stroke-width="0.5"/>
+              <line x1="240" y1="0" x2="240" y2="65" stroke="rgba(200,220,240,0.04)" stroke-width="0.5"/>
+              <line x1="360" y1="0" x2="360" y2="65" stroke="rgba(200,220,240,0.04)" stroke-width="0.5"/>
+              <line x1="60" y1="65" x2="60" y2="130" stroke="rgba(200,220,240,0.04)" stroke-width="0.5"/>
+              <line x1="180" y1="65" x2="180" y2="130" stroke="rgba(200,220,240,0.04)" stroke-width="0.5"/>
+              <line x1="300" y1="65" x2="300" y2="130" stroke="rgba(200,220,240,0.04)" stroke-width="0.5"/>
+              <line x1="420" y1="65" x2="420" y2="130" stroke="rgba(200,220,240,0.04)" stroke-width="0.5"/>
+              <!-- Défaut : tache de peinture -->
+              <ellipse cx="240" cy="100" rx="38" ry="28" fill="rgba(180,160,130,0.18)" />
+              <ellipse cx="240" cy="100" rx="28" ry="20" fill="rgba(180,160,130,0.14)" />
+              <ellipse cx="233" cy="95" rx="14" ry="10" fill="rgba(170,145,115,0.22)" />
+              <!-- Coins du cadre photo -->
+              <rect x="0" y="0" width="480" height="300" fill="none" stroke="rgba(200,223,245,0.08)" stroke-width="1"/>
+            </svg>
 
-          <!-- Line overlay SVG -->
-          <svg class="bp-line-svg" id="bpLineSvg" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg"></svg>
+            <!-- Cadre viseur appareil photo -->
+            <div id="bpViewfinder" style="
+              position:absolute;
+              border:2px solid rgba(255,255,255,0.7);
+              border-radius:4px;
+              width:180px;height:120px;
+              left:50%;top:50%;
+              transform:translate(-50%,-60%);
+              transition:all 0.6s ease;
+              box-shadow:0 0 0 2000px rgba(0,0,0,0.35);
+            ">
+              <!-- Coins du viseur -->
+              <span style="position:absolute;top:-2px;left:-2px;width:16px;height:16px;border-top:3px solid #fff;border-left:3px solid #fff;border-radius:2px 0 0 0;"></span>
+              <span style="position:absolute;top:-2px;right:-2px;width:16px;height:16px;border-top:3px solid #fff;border-right:3px solid #fff;border-radius:0 2px 0 0;"></span>
+              <span style="position:absolute;bottom:-2px;left:-2px;width:16px;height:16px;border-bottom:3px solid #fff;border-left:3px solid #fff;border-radius:0 0 0 2px;"></span>
+              <span style="position:absolute;bottom:-2px;right:-2px;width:16px;height:16px;border-bottom:3px solid #fff;border-right:3px solid #fff;border-radius:0 0 2px 0;"></span>
+            </div>
+            <!-- Icône appareil photo -->
+            <div id="bpCameraIcon" style="
+              position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
+              background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);
+              border-radius:50%;width:44px;height:44px;
+              display:flex;align-items:center;justify-content:center;
+              font-size:1.3rem;
+              transition:all 0.3s ease;
+            ">📷</div>
+          </div>
 
-          <!-- Ping & Reserve (absolute, driven by JS) -->
-          <div class="bp-ping" id="bpPing"></div>
-          <div class="bp-reserve" id="bpReserve"></div>
-        </div>
+          <!-- Flash de capture -->
+          <div id="bpFlash" style="
+            position:absolute;inset:0;
+            background:white;opacity:0;
+            pointer-events:none;
+            transition:opacity 0.08s ease;
+          "></div>
 
-        <div class="bp-stats">
-          <div class="bp-stat"><span class="v">−45%</span><span class="l">temps OPR</span></div>
-          <div class="bp-stat"><span class="v">75%</span><span class="l">précision</span></div>
-          <div class="bp-stat"><span class="v">6</span><span class="l">défauts types</span></div>
-          <div class="bp-stat"><span class="v">15k</span><span class="l">photos annotées</span></div>
+          <!-- Phase 2 : Analyse IA -->
+          <div id="bpAI" style="
+            position:absolute;inset:0;background:#050d17;
+            opacity:0;transition:opacity 0.5s ease;
+            display:flex;align-items:center;justify-content:center;
+            flex-direction:column;gap:1rem;
+          ">
+            <svg width="100%" height="100%" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" fill="none" style="position:absolute;inset:0;">
+              <rect width="480" height="300" fill="#0a1218"/>
+              <rect x="0" y="0" width="480" height="200" fill="#0e1820"/>
+              <line x1="0" y1="65" x2="480" y2="65" stroke="rgba(200,220,240,0.05)" stroke-width="0.8"/>
+              <line x1="0" y1="130" x2="480" y2="130" stroke="rgba(200,220,240,0.05)" stroke-width="0.8"/>
+              <ellipse cx="240" cy="100" rx="38" ry="28" fill="rgba(180,160,130,0.18)" />
+              <ellipse cx="240" cy="100" rx="28" ry="20" fill="rgba(180,160,130,0.14)" />
+              <ellipse cx="233" cy="95" rx="14" ry="10" fill="rgba(170,145,115,0.22)" />
+            </svg>
+            <!-- Bounding box IA animée -->
+            <div id="bpBbox" style="
+              position:absolute;
+              border:2px solid var(--orange);
+              border-radius:3px;
+              width:100px;height:72px;
+              left:50%;top:48%;
+              transform:translate(-50%,-50%) scale(0.6);
+              opacity:0;
+              box-shadow:0 0 12px rgba(232,101,26,0.4);
+              transition:all 0.5s cubic-bezier(0.34,1.56,0.64,1);
+            "></div>
+            <!-- Scan line -->
+            <div id="bpScanLine" style="
+              position:absolute;left:50%;top:0%;width:2px;height:100%;
+              background:linear-gradient(to bottom,transparent,rgba(232,101,26,0.6),transparent);
+              transform:translateX(-50%);
+              opacity:0;
+            "></div>
+            <!-- Label IA -->
+            <div id="bpAILabel" style="
+              position:absolute;
+              left:50%;top:calc(48% + 44px);
+              transform:translateX(-50%);
+              background:var(--orange);color:#fff;
+              font-family:var(--font-mono);font-size:0.58rem;
+              letter-spacing:0.1em;padding:3px 10px;border-radius:2px;
+              opacity:0;white-space:nowrap;
+              transition:opacity 0.4s ease;
+            ">TACHE PEINTURE · 91%</div>
+            <!-- Texte analyse -->
+            <div id="bpAnalyseTxt" style="
+              position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
+              font-family:var(--font-mono);font-size:0.62rem;letter-spacing:0.12em;
+              color:rgba(232,101,26,0.8);white-space:nowrap;
+              opacity:0;transition:opacity 0.4s ease;
+            ">OPRIA IA · ANALYSE EN COURS…</div>
+          </div>
+
+          <!-- Phase 3 : Formulaire réserve -->
+          <div id="bpForm" style="
+            position:absolute;inset:0;
+            background:#050d17;
+            opacity:0;transition:opacity 0.5s ease;
+            display:flex;align-items:center;justify-content:center;
+            padding:1.5rem;
+          ">
+            <div style="
+              background:#0b1a0e;
+              border:1px solid rgba(232,101,26,0.35);
+              border-radius:6px;width:100%;max-width:340px;
+              padding:1.2rem 1.4rem;
+              box-shadow:0 0 24px rgba(232,101,26,0.1);
+              font-family:var(--font-mono);
+            ">
+              <!-- Header formulaire -->
+              <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;padding-bottom:0.8rem;border-bottom:1px solid rgba(232,101,26,0.2);">
+                <span style="color:var(--orange);font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;flex:1;">⚑ Réserve générée</span>
+                <span style="background:rgba(232,101,26,0.15);border:1px solid rgba(232,101,26,0.3);color:var(--orange);font-size:0.58rem;padding:2px 7px;border-radius:2px;">AUTO</span>
+              </div>
+              <!-- Champs -->
+              <div style="display:flex;flex-direction:column;gap:0.65rem;">
+                <div>
+                  <div style="font-size:0.55rem;letter-spacing:0.14em;color:rgba(200,223,245,0.3);text-transform:uppercase;margin-bottom:3px;">Type de défaut</div>
+                  <div id="bpF1" style="
+                    background:rgba(232,101,26,0.08);border:1px solid rgba(232,101,26,0.25);
+                    border-radius:3px;padding:5px 10px;color:var(--orange);font-size:0.7rem;
+                    opacity:0;transform:translateX(-8px);transition:all 0.35s ease;
+                  ">Tache de peinture</div>
+                </div>
+                <div>
+                  <div style="font-size:0.55rem;letter-spacing:0.14em;color:rgba(200,223,245,0.3);text-transform:uppercase;margin-bottom:3px;">Description</div>
+                  <div id="bpF2" style="
+                    background:rgba(200,223,245,0.04);border:1px solid var(--border);
+                    border-radius:3px;padding:5px 10px;color:var(--text);font-size:0.68rem;
+                    opacity:0;transform:translateX(-8px);transition:all 0.35s ease 0.1s;
+                  ">Trace de projection sur mur béton</div>
+                </div>
+                <div>
+                  <div style="font-size:0.55rem;letter-spacing:0.14em;color:rgba(200,223,245,0.3);text-transform:uppercase;margin-bottom:3px;">Assigné à</div>
+                  <div id="bpF3" style="
+                    background:rgba(200,223,245,0.04);border:1px solid var(--border);
+                    border-radius:3px;padding:5px 10px;color:var(--text);font-size:0.68rem;
+                    opacity:0;transform:translateX(-8px);transition:all 0.35s ease 0.2s;
+                  ">Sous-traitant peinture</div>
+                </div>
+                <div>
+                  <div style="font-size:0.55rem;letter-spacing:0.14em;color:rgba(200,223,245,0.3);text-transform:uppercase;margin-bottom:3px;">Localisation</div>
+                  <div id="bpF4" style="
+                    background:rgba(200,223,245,0.04);border:1px solid var(--border);
+                    border-radius:3px;padding:5px 10px;color:var(--text);font-size:0.68rem;
+                    opacity:0;transform:translateX(-8px);transition:all 0.35s ease 0.3s;
+                  ">Bureau A · Niv. 3</div>
+                </div>
+              </div>
+              <!-- Checkmark -->
+              <div id="bpCheck" style="
+                margin-top:1rem;display:flex;align-items:center;gap:0.5rem;
+                opacity:0;transition:opacity 0.4s ease;
+              ">
+                <span style="width:18px;height:18px;border-radius:50%;background:rgba(100,220,120,0.2);border:1px solid rgba(100,220,120,0.5);display:flex;align-items:center;justify-content:center;font-size:0.7rem;">✓</span>
+                <span style="font-size:0.6rem;color:rgba(100,220,120,0.8);letter-spacing:0.1em;">RÉSERVE CRÉÉE EN 0.8s</span>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   </section>
+
+  <!-- BANDEAU CHIFFRES CLÉS -->
+  <div class="kpi-band">
+    <div class="kpi-item">
+      <span class="kpi-value">20 sec</span>
+      <span class="kpi-label">de saisie</span>
+      <span class="kpi-desc">par réserve</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-value">30 000 réserves</span>
+      <span class="kpi-label">en moyenne</span>
+      <span class="kpi-desc">sur un grand chantier</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-value">167 heures</span>
+      <span class="kpi-label">de saisie</span>
+      <span class="kpi-desc">des réserves</span>
+    </div>
+    <div class="kpi-item">
+      <span class="kpi-value">- 45%</span>
+      <span class="kpi-label">de temps de saisie</span>
+      <span class="kpi-desc">avec OPRIA</span>
+    </div>
+  </div>
 
   <div class="divider"></div>
 
@@ -472,7 +669,7 @@
       </div>
       <div>
         <p class="section-tag">Opportunité</p>
-        <h2 class="section-title">6 défauts récurrents,<br/>70% des réserves.</h2>
+        <h2 class="section-title">6 défauts récurrents<br/>représentent 70% des réserves.</h2>
         <p class="section-lead">
           Ces défauts sont identiques d'un chantier à l'autre — toujours décrits de la même façon, toujours assignés aux mêmes sous-traitants.
         </p>
@@ -618,23 +815,6 @@
       <p class="section-lead">
         Vous êtes investisseur, éditeur de logiciel BTP, cabinet d'architecture ou entreprise générale ? Nous serions ravis d'échanger sur la manière dont OPRIA peut s'intégrer à votre activité.
       </p>
-      <div class="contact-cards">
-        <div class="contact-card">
-          <div class="role">Co-fondateurs</div>
-          <div class="name">Équipe OPRIA</div>
-          <a href="mailto:contact@opria.fr">contact@opria.fr</a>
-        </div>
-        <div class="contact-card">
-          <div class="role">Partenariats & Investisseurs</div>
-          <div class="name">Business Development</div>
-          <a href="mailto:invest@opria.fr">invest@opria.fr</a>
-        </div>
-        <div class="contact-card">
-          <div class="role">Intégration technique</div>
-          <div class="name">API & Solutions</div>
-          <a href="mailto:tech@opria.fr">tech@opria.fr</a>
-        </div>
-      </div>
       <div style="margin-top:2.5rem;">
         <a href="mailto:contact@opria.fr" class="btn-primary">Envoyer un message →</a>
       </div>
@@ -648,77 +828,104 @@
     <p style="font-size:0.75rem; color:var(--border);">Paris · France</p>
   </footer>
 
-  <script>
+  <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
     /* ════════════════════════════════
-       BLUEPRINT ANIMATION
+       ANIMATION PHOTO → RÉSERVE
     ════════════════════════════════ */
     (function () {
-      const canvas  = document.getElementById('bpCanvas');
-      const ping    = document.getElementById('bpPing');
-      const reserve = document.getElementById('bpReserve');
-      const lineSvg = document.getElementById('bpLineSvg');
+      const photo     = document.getElementById('bpPhoto');
+      const flash     = document.getElementById('bpFlash');
+      const aiPhase   = document.getElementById('bpAI');
+      const formPhase = document.getElementById('bpForm');
+      const bbox      = document.getElementById('bpBbox');
+      const scanLine  = document.getElementById('bpScanLine');
+      const aiLabel   = document.getElementById('bpAILabel');
+      const analyseTxt= document.getElementById('bpAnalyseTxt');
+      const f1 = document.getElementById('bpF1');
+      const f2 = document.getElementById('bpF2');
+      const f3 = document.getElementById('bpF3');
+      const f4 = document.getElementById('bpF4');
+      const chk= document.getElementById('bpCheck');
 
-      // Each defect: ping position (%), reserve label position (%), label text
-      const defects = [
-        { px:22, py:32, rx:55, ry:20, label:'Reprise peinture' },
-        { px:68, py:58, rx:35, ry:72, label:'Joint à refaire'  },
-        { px:50, py:78, rx:78, ry:88, label:'Tache · Bureau C' },
-        { px:15, py:65, rx:48, ry:52, label:'Impact'           },
-        { px:80, py:35, rx:52, ry:62, label:'Nettoyage'        },
-        { px:38, py:45, rx:72, ry:28, label:'Faux plafond'     },
-      ];
-
-      let idx = 0;
-
-      function pct(v, total) { return (v / 100) * total; }
-
-      function cycle() {
-        const d  = defects[idx % defects.length];
-        const W  = canvas.offsetWidth;
-        const H  = canvas.offsetHeight;
-
-        // ── 1. Place & show ping ──
-        ping.style.left    = pct(d.px, W) + 'px';
-        ping.style.top     = pct(d.py, H) + 'px';
-        ping.style.opacity = '1';
-
-        // ── 2. Draw animated line after 350ms ──
-        setTimeout(() => {
-          const vW = 480, vH = 300;
-          const x1 = pct(d.px, vW), y1 = pct(d.py, vH);
-          const x2 = pct(d.rx, vW), y2 = pct(d.ry, vH);
-          const len = Math.hypot(x2 - x1, y2 - y1);
-
-          lineSvg.innerHTML = `
-            <line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}"
-              stroke="rgba(232,101,26,0.75)" stroke-width="1.3"
-              stroke-dasharray="${len}" stroke-dashoffset="${len}"
-              style="animation: drawLine 0.45s ease forwards;"
-            />
-            <circle cx="${x1}" cy="${y1}" r="3" fill="none"
-              stroke="rgba(232,101,26,0.5)" stroke-width="1"/>`;
-        }, 350);
-
-        // ── 3. Show reserve label after 850ms ──
-        setTimeout(() => {
-          reserve.textContent  = '⚑ ' + d.label;
-          reserve.style.left   = pct(d.rx, W) + 'px';
-          reserve.style.top    = pct(d.ry, H) + 'px';
-          reserve.style.opacity = '1';
-        }, 850);
-
-        // ── 4. Fade out & move to next after 2.8s ──
-        setTimeout(() => {
-          ping.style.opacity    = '0';
-          reserve.style.opacity = '0';
-          lineSvg.innerHTML     = '';
-          idx++;
-        }, 2800);
+      function resetAll() {
+        photo.style.opacity     = '0';
+        flash.style.opacity     = '0';
+        aiPhase.style.opacity   = '0';
+        formPhase.style.opacity = '0';
+        bbox.style.opacity      = '0';
+        bbox.style.transform    = 'translate(-50%,-50%) scale(0.6)';
+        scanLine.style.opacity  = '0';
+        scanLine.style.animation= 'none';
+        aiLabel.style.opacity   = '0';
+        analyseTxt.style.opacity= '0';
+        [f1,f2,f3,f4,chk].forEach(el => {
+          el.style.opacity   = '0';
+          if (el !== chk) el.style.transform = 'translateX(-8px)';
+        });
       }
 
-      // Kick off
-      setTimeout(cycle, 900);
-      setInterval(cycle, 3400);
+      function runCycle() {
+        resetAll();
+
+        // Phase 1 : appareil photo (0–1.8s)
+        setTimeout(() => { photo.style.opacity = '1'; }, 100);
+
+        // Shutter click + flash (1.8s)
+        setTimeout(() => {
+          flash.style.transition = 'opacity 0.08s ease';
+          flash.style.opacity    = '0.95';
+          setTimeout(() => { flash.style.opacity = '0'; }, 120);
+        }, 1800);
+
+        // Phase 2 : analyse IA (2s)
+        setTimeout(() => {
+          photo.style.opacity   = '0';
+          aiPhase.style.opacity = '1';
+
+          // Scan line sweep
+          setTimeout(() => {
+            scanLine.style.opacity   = '1';
+            scanLine.style.animation = 'scanSweep 0.9s ease-in-out forwards';
+          }, 200);
+
+          // Bounding box
+          setTimeout(() => {
+            bbox.style.opacity   = '1';
+            bbox.style.transform = 'translate(-50%,-50%) scale(1)';
+          }, 600);
+
+          // Label IA
+          setTimeout(() => { aiLabel.style.opacity = '1'; }, 1100);
+          setTimeout(() => { analyseTxt.style.opacity = '1'; }, 800);
+        }, 2000);
+
+        // Phase 3 : formulaire (4s)
+        setTimeout(() => {
+          aiPhase.style.opacity   = '0';
+          formPhase.style.opacity = '1';
+
+          setTimeout(() => { f1.style.opacity = '1'; f1.style.transform = 'translateX(0)'; }, 200);
+          setTimeout(() => { f2.style.opacity = '1'; f2.style.transform = 'translateX(0)'; }, 400);
+          setTimeout(() => { f3.style.opacity = '1'; f3.style.transform = 'translateX(0)'; }, 600);
+          setTimeout(() => { f4.style.opacity = '1'; f4.style.transform = 'translateX(0)'; }, 800);
+          setTimeout(() => { chk.style.opacity = '1'; }, 1100);
+        }, 4000);
+
+        // Pause puis loop (7.5s total)
+        setTimeout(runCycle, 7500);
+      }
+
+      // Inject scan animation keyframes
+      const style = document.createElement('style');
+      style.textContent = `
+        @keyframes scanSweep {
+          0%   { top: 0%; opacity: 1; }
+          100% { top: 100%; opacity: 0; }
+        }
+      `;
+      document.head.appendChild(style);
+
+      setTimeout(runCycle, 800);
     })();
 
     /* ════════════════════════════════
@@ -726,16 +933,12 @@
     ════════════════════════════════ */
     const io = new IntersectionObserver((entries) => {
       entries.forEach(e => {
-        if (e.isIntersecting) {
-          setTimeout(() => e.target.classList.add('visible'), Number(e.target.dataset.delay || 0));
-        }
+        if (e.isIntersecting) { e.target.classList.add('visible'); io.unobserve(e.target); }
       });
-    }, { threshold: 0.12 });
+    }, { threshold: 0.15 });
 
-    document.querySelectorAll('.card').forEach((el, i) => { el.dataset.delay = i * 100; io.observe(el); });
-    document.querySelectorAll('.step').forEach((el, i) => { el.dataset.delay = i * 120; io.observe(el); });
-    document.querySelectorAll('.team-card').forEach((el, i) => { el.dataset.delay = i * 150; io.observe(el); });
+    document.querySelectorAll('.step, .card, .team-card, .kpi-item').forEach(el => io.observe(el));
+
   </script>
-
 </body>
 </html>

@@ -16,10 +16,22 @@
       --surface:  #e1e1e1;
       --border:   #72768a;
       --orange:   #ff4b61;
+      --orange-soft: rgba(255,75,97,0.1);
+      --orange-border: rgba(255,75,97,0.25);
+      --orange-border-strong: rgba(255,75,97,0.4);
+      --orange-border-medium: rgba(255,75,97,0.35);
+      --orange-glow: rgba(255,75,97,0.07);
       --cream:    #454a5c;
       --muted:    #72768a;
       --text:     #454a5c;
       --white:    #454a5c;
+      --nav-bg: rgba(13,15,14,0.88);
+      --surface-dark: #06101c;
+      --surface-darker: #050d17;
+      --surface-deep: #0e1410;
+      --surface-deep-2: #1a2018;
+      --highlight: rgba(200,223,245,0.14);
+      --highlight-strong: rgba(200,223,245,0.4);
       --font-display: 'Bebas Neue', sans-serif;
       --font-body:    'DM Sans', sans-serif;
       --font-mono:    'DM Mono', monospace;
@@ -51,7 +63,7 @@
       display: flex; align-items: center; justify-content: space-between;
       padding: 0 clamp(1.5rem, 5vw, 4rem);
       height: 64px;
-      background: rgba(13,15,14,0.88);
+      background: var(--nav-bg);
       backdrop-filter: blur(14px);
       border-bottom: 1px solid var(--border);
     }
@@ -88,7 +100,7 @@
       position: absolute; right: -10%; top: 50%;
       transform: translateY(-50%);
       width: 55vw; height: 55vw;
-      background: radial-gradient(ellipse at center, rgba(232,101,26,0.07) 0%, transparent 65%);
+      background: radial-gradient(ellipse at center, var(--orange-glow) 0%, transparent 65%);
       pointer-events: none;
     }
 
@@ -96,8 +108,8 @@
       display: inline-flex; align-items: center; gap: 0.5rem;
       font-family: var(--font-mono); font-size: 0.72rem;
       letter-spacing: 0.14em; text-transform: uppercase;
-      color: var(--orange); background: rgba(232,101,26,0.1);
-      border: 1px solid rgba(232,101,26,0.25);
+      color: var(--orange); background: var(--orange-soft);
+      border: 1px solid var(--orange-border);
       padding: 0.35rem 0.85rem; border-radius: 2px;
       margin-bottom: 1.5rem;
     }
@@ -141,20 +153,20 @@
       position: relative;
     }
     .blueprint-card {
-      background: #06101c;
-      border: 1px solid rgba(200,223,245,0.14);
+      background: var(--surface-dark);
+      border: 1px solid var(--highlight);
       border-radius: 8px; padding: 1.5rem;
       position: relative; overflow: hidden;
     }
     .blueprint-card::before {
       content: '';
       position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, rgba(200,223,245,0.4), transparent);
+      background: linear-gradient(90deg, transparent, var(--highlight-strong), transparent);
     }
     .blueprint-canvas {
       width: 100%; aspect-ratio: 16/10;
       position: relative; overflow: hidden; border-radius: 4px;
-      background: #050d17;
+      background: var(--surface-darker);
     }
     .hero-teaser {
       width: 100%; height: 100%; object-fit: cover;
@@ -191,7 +203,7 @@
     .defect-tag {
       display: inline-flex; align-items: center; gap: 0.4rem;
       font-size: 0.82rem; font-weight: 500; color: var(--cream);
-      background: rgba(232,101,26,0.1); border: 1px solid rgba(232,101,26,0.2);
+      background: var(--orange-soft); border: 1px solid var(--orange-border);
       padding: 0.4rem 0.9rem; border-radius: 2px; letter-spacing: 0.04em;
     }
     .defect-tag::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--orange); }
@@ -223,7 +235,7 @@
       opacity: 0; transform: translateY(24px);
     }
     .card.visible { opacity: 1; transform: none; }
-    .card:hover { border-color: rgba(232,101,26,0.4); transform: translateY(-3px); }
+    .card:hover { border-color: var(--orange-border); transform: translateY(-3px); }
     .card::before {
       content: ''; position: absolute; top: 0; left: 0;
       width: 3px; height: 100%; background: var(--orange);
@@ -243,7 +255,7 @@
       opacity: 0; transform: translateY(24px);
     }
     .team-card.visible { opacity: 1; transform: none; }
-    .team-card:hover { border-color: rgba(232,101,26,0.35); transform: translateY(-4px); }
+    .team-card:hover { border-color: var(--orange-border-medium); transform: translateY(-4px); }
     .team-photo {
       width: 100%; aspect-ratio: 1/1;
       position: relative; overflow: hidden;
@@ -252,7 +264,7 @@
     .team-photo-placeholder {
       width: 100%; height: 100%;
       display: flex; align-items: center; justify-content: center;
-      background: linear-gradient(135deg, #0e1410 0%, #1a2018 100%);
+      background: linear-gradient(135deg, var(--surface-deep) 0%, var(--surface-deep-2) 100%);
     }
     .team-photo-initials {
       font-family: var(--font-display); font-size: 3.5rem;

@@ -88,12 +88,13 @@
 
     /* ── HERO ── */
     .hero {
-      min-height: 100vh;
-      display: grid; grid-template-columns: 1fr 1fr;
+      min-height: 100svh;
+      display: flex;
       align-items: center;
-      padding: 0 clamp(1.5rem, 5vw, 4rem);
-      padding-top: 64px; gap: 4rem;
-      position: relative; overflow: hidden;
+      padding: calc(64px + 3rem) clamp(1.5rem, 5vw, 4rem) 4rem;
+      position: relative;
+      overflow: hidden;
+      isolation: isolate;
     }
     .hero::after {
       content: '';
@@ -102,6 +103,14 @@
       width: 55vw; height: 55vw;
       background: radial-gradient(ellipse at center, var(--orange-glow) 0%, transparent 65%);
       pointer-events: none;
+      z-index: 0;
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 620px;
+      width: 100%;
     }
 
     .hero-tag {
@@ -129,7 +138,7 @@
     .hero-sub {
       margin-top: 1.5rem;
       font-size: 1.2rem; font-weight: 300;
-      color: var(--text); max-width: 44ch;
+      color: rgba(255,255,255,0.86); max-width: 44ch;
     }
 
     .hero-actions {
@@ -148,28 +157,17 @@
     }
     .btn-primary:hover { background: var(--orange); transform: translateY(-1px); }
 
-    /* ── BLUEPRINT CARD ── */
-    .hero-visual {
-      position: relative;
+    /* ── HERO VIDEO BACKGROUND ── */
+    .hero-video {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
     }
-    .blueprint-card {
-      background: var(--surface-dark);
-      border: 1px solid var(--highlight);
-      border-radius: 8px; padding: 1.5rem;
-      position: relative; overflow: hidden;
-    }
-    .blueprint-card::before {
-      content: '';
-      position: absolute; top: 0; left: 0; right: 0; height: 2px;
-      background: linear-gradient(90deg, transparent, var(--highlight-strong), transparent);
-    }
-    .blueprint-canvas {
-      width: 100%; aspect-ratio: 16/10;
-      position: relative; overflow: hidden; border-radius: 4px;
-      background: var(--surface-darker);
-    }
-    .hero-teaser {
-      width: 100%; height: 100%; object-fit: cover;
+    .hero-video video {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: center;
       display: block;
     }
 
@@ -342,8 +340,7 @@
     /* ── ANIMATIONS ── */
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
-      .hero { grid-template-columns: 1fr; padding-top: 80px; }
-      .hero-visual { display: none; }
+      .hero { padding-top: 88px; }
       .two-col { grid-template-columns: 1fr; gap: 3rem; }
       .team-grid { grid-template-columns: 1fr; max-width: 360px; }
       .nav-links { display: none; }
@@ -366,6 +363,10 @@
 
   <!-- HERO -->
   <section class="hero">
+    <div class="hero-video">
+      <video src="teaser.mp4" autoplay muted loop playsinline preload="metadata"></video>
+    </div>
+
     <div class="hero-content">
       <div class="hero-tag">Startup BTP × IA</div>
       <h1 class="hero-title">
@@ -374,14 +375,6 @@
       <p class="hero-sub">Réduire le temps de création des réserves.</p>
       <div class="hero-actions">
         <a href="#contact" class="btn-primary">Prendre contact →</a>
-      </div>
-    </div>
-
-    <div class="hero-visual">
-      <div class="blueprint-card">
-        <div class="blueprint-canvas">
-          <video class="hero-teaser" src="teaser.mp4" autoplay muted loop playsinline preload="metadata"></video>
-        </div>
       </div>
     </div>
   </section>

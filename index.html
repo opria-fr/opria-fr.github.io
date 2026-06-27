@@ -197,6 +197,28 @@
     /* ── TWO COL ── */
     .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 5rem; align-items: start; }
 
+    /* ── COMMENT SECTION ── */
+    #comment { position: relative; }
+    .comment-video {
+      position: absolute;
+      top: clamp(4rem, 10vw, 8rem);
+      right: clamp(1.5rem, 5vw, 4rem);
+      margin-right: clamp(1.5rem, 5vw, 4rem);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      aspect-ratio: 16/9;
+      background: var(--surface-dark);
+      max-width: 500px;
+      width: 40vw;
+    }
+    .comment-video video {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      display: block;
+    }
+
     .defects-list { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
     .defect-tag {
       display: inline-flex; align-items: center; gap: 0.4rem;
@@ -342,6 +364,7 @@
     @media (max-width: 768px) {
       .hero { padding-top: 88px; }
       .two-col { grid-template-columns: 1fr; gap: 3rem; }
+      .comment-video { position: static; max-width: 100%; width: 100%; margin-bottom: 2rem; }
       .team-grid { grid-template-columns: 1fr; max-width: 360px; }
       .nav-links { display: none; }
       .step { grid-template-columns: 60px 1fr; gap: 1rem; }
@@ -442,6 +465,9 @@
   <section id="comment">
     <p class="section-tag">Notre technologie</p>
     <h2 class="section-title">Comment ça marche</h2>
+    <div class="comment-video">
+      <video src="teaser.mp4" autoplay muted loop playsinline preload="metadata"></video>
+    </div>
     <p class="section-lead">
       OPRIA s'intègre aux logiciels de suivi de chantier existants comme une brique IA dédiée à la détection automatique des défauts.
     </p>

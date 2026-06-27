@@ -100,21 +100,17 @@
       border: 1px solid rgba(232,101,26,0.25);
       padding: 0.35rem 0.85rem; border-radius: 2px;
       margin-bottom: 1.5rem;
-      animation: fadeUp 0.6s ease both;
     }
     .hero-tag::before {
       content: ''; width: 6px; height: 6px;
       border-radius: 50%; background: var(--orange);
-      animation: blink 2s infinite;
     }
-    @keyframes blink { 0%,100%{opacity:1} 50%{opacity:0.25} }
 
     .hero-title {
       font-family: var(--font-display);
       font-size: clamp(3.2rem, 6.5vw, 6rem);
       line-height: 0.95; letter-spacing: 0.03em;
       color: var(--white);
-      animation: fadeUp 0.7s 0.1s ease both;
     }
     .hero-title em { font-style: normal; color: var(--orange); }
 
@@ -122,13 +118,11 @@
       margin-top: 1.5rem;
       font-size: 1.2rem; font-weight: 300;
       color: var(--text); max-width: 44ch;
-      animation: fadeUp 0.7s 0.2s ease both;
     }
 
     .hero-actions {
       margin-top: 2.5rem;
       display: flex; gap: 1rem; flex-wrap: wrap;
-      animation: fadeUp 0.7s 0.3s ease both;
     }
 
     .btn-primary {
@@ -145,7 +139,6 @@
     /* ── BLUEPRINT CARD ── */
     .hero-visual {
       position: relative;
-      animation: fadeIn 1s 0.4s ease both;
     }
     .blueprint-card {
       background: #06101c;
@@ -163,57 +156,9 @@
       position: relative; overflow: hidden; border-radius: 4px;
       background: #050d17;
     }
-    .bp-svg {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-    }
-    .bp-line-svg {
-      position: absolute; inset: 0; width: 100%; height: 100%;
-      pointer-events: none;
-    }
-    .bp-ping {
-      position: absolute;
-      width: 10px; height: 10px; border-radius: 50%;
-      background: var(--orange);
-      transform: translate(-50%, -50%);
-      opacity: 0; transition: opacity 0.3s ease;
-      pointer-events: none;
-    }
-    .bp-ping::after {
-      content: '';
-      position: absolute; inset: -7px; border-radius: 50%;
-      border: 2px solid var(--orange);
-      animation: ripple 1.6s ease-out infinite;
-    }
-    @keyframes ripple {
-      0%   { transform: scale(0.4); opacity: 0.9; }
-      100% { transform: scale(2.4); opacity: 0; }
-    }
-    .bp-reserve {
-      position: absolute;
-      background: rgba(232,101,26,0.13);
-      border: 1px solid rgba(232,101,26,0.7);
-      border-radius: 3px; padding: 3px 8px;
-      font-family: var(--font-mono); font-size: 0.58rem;
-      color: var(--orange); white-space: nowrap;
-      opacity: 0; transition: opacity 0.35s ease;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
-    }
-    .bp-stats {
-      margin-top: 1.2rem;
-      display: flex; justify-content: space-between;
-      border-top: 1px solid rgba(200,223,245,0.07);
-      padding-top: 1rem;
-    }
-    .bp-stat { text-align: center; }
-    .bp-stat .v {
-      display: block; font-family: var(--font-display);
-      font-size: 1.5rem; letter-spacing: 0.06em;
-      color: var(--orange); line-height: 1;
-    }
-    .bp-stat .l {
-      font-size: 0.62rem; color: rgba(200,223,245,0.35);
-      text-transform: uppercase; letter-spacing: 0.1em; margin-top: 0.2rem;
+    .hero-teaser {
+      width: 100%; height: 100%; object-fit: cover;
+      display: block;
     }
 
     /* ── SECTIONS ── */
@@ -383,10 +328,6 @@
     footer p { font-size: 0.78rem; color: var(--muted); }
 
     /* ── ANIMATIONS ── */
-    @keyframes fadeUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:none} }
-    @keyframes fadeIn { from{opacity:0} to{opacity:1} }
-    @keyframes drawLine { to { stroke-dashoffset: 0; } }
-
     /* ── RESPONSIVE ── */
     @media (max-width: 768px) {
       .hero { grid-template-columns: 1fr; padding-top: 80px; }
@@ -426,201 +367,8 @@
 
     <div class="hero-visual">
       <div class="blueprint-card">
-        <div class="blueprint-canvas" id="bpCanvas">
-
-          <!-- ANIMATION : photo → réserve via IA -->
-          <!-- Phase 1 : Cadre photo avec défaut -->
-          <div id="bpPhoto" style="
-            position:absolute;inset:0;
-            display:flex;align-items:center;justify-content:center;
-            background:#050d17;
-            opacity:0;transition:opacity 0.5s ease;
-          ">
-            <!-- Fond "photo de chantier" stylisé -->
-            <svg width="100%" height="100%" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" fill="none" style="position:absolute;inset:0;">
-              <!-- Sol béton -->
-              <rect width="480" height="300" fill="#0a1218"/>
-              <!-- Texture béton -->
-              <line x1="0" y1="200" x2="480" y2="200" stroke="rgba(200,220,240,0.06)" stroke-width="1"/>
-              <line x1="0" y1="220" x2="480" y2="220" stroke="rgba(200,220,240,0.04)" stroke-width="0.5"/>
-              <!-- Mur -->
-              <rect x="0" y="0" width="480" height="200" fill="#0e1820"/>
-              <!-- Joints de mur horizontaux -->
-              <line x1="0" y1="65" x2="480" y2="65" stroke="rgba(200,220,240,0.05)" stroke-width="0.8"/>
-              <line x1="0" y1="130" x2="480" y2="130" stroke="rgba(200,220,240,0.05)" stroke-width="0.8"/>
-              <!-- Joints verticaux décalés -->
-              <line x1="120" y1="0" x2="120" y2="65" stroke="rgba(200,220,240,0.04)" stroke-width="0.5"/>
-              <line x1="240" y1="0" x2="240" y2="65" stroke="rgba(200,220,240,0.04)" stroke-width="0.5"/>
-              <line x1="360" y1="0" x2="360" y2="65" stroke="rgba(200,220,240,0.04)" stroke-width="0.5"/>
-              <line x1="60" y1="65" x2="60" y2="130" stroke="rgba(200,220,240,0.04)" stroke-width="0.5"/>
-              <line x1="180" y1="65" x2="180" y2="130" stroke="rgba(200,220,240,0.04)" stroke-width="0.5"/>
-              <line x1="300" y1="65" x2="300" y2="130" stroke="rgba(200,220,240,0.04)" stroke-width="0.5"/>
-              <line x1="420" y1="65" x2="420" y2="130" stroke="rgba(200,220,240,0.04)" stroke-width="0.5"/>
-              <!-- Défaut : tache de peinture -->
-              <ellipse cx="240" cy="100" rx="38" ry="28" fill="rgba(180,160,130,0.18)" />
-              <ellipse cx="240" cy="100" rx="28" ry="20" fill="rgba(180,160,130,0.14)" />
-              <ellipse cx="233" cy="95" rx="14" ry="10" fill="rgba(170,145,115,0.22)" />
-              <!-- Coins du cadre photo -->
-              <rect x="0" y="0" width="480" height="300" fill="none" stroke="rgba(200,223,245,0.08)" stroke-width="1"/>
-            </svg>
-
-            <!-- Cadre viseur appareil photo -->
-            <div id="bpViewfinder" style="
-              position:absolute;
-              border:2px solid rgba(255,255,255,0.7);
-              border-radius:4px;
-              width:180px;height:120px;
-              left:50%;top:50%;
-              transform:translate(-50%,-60%);
-              transition:all 0.6s ease;
-              box-shadow:0 0 0 2000px rgba(0,0,0,0.35);
-            ">
-              <!-- Coins du viseur -->
-              <span style="position:absolute;top:-2px;left:-2px;width:16px;height:16px;border-top:3px solid #fff;border-left:3px solid #fff;border-radius:2px 0 0 0;"></span>
-              <span style="position:absolute;top:-2px;right:-2px;width:16px;height:16px;border-top:3px solid #fff;border-right:3px solid #fff;border-radius:0 2px 0 0;"></span>
-              <span style="position:absolute;bottom:-2px;left:-2px;width:16px;height:16px;border-bottom:3px solid #fff;border-left:3px solid #fff;border-radius:0 0 0 2px;"></span>
-              <span style="position:absolute;bottom:-2px;right:-2px;width:16px;height:16px;border-bottom:3px solid #fff;border-right:3px solid #fff;border-radius:0 0 2px 0;"></span>
-            </div>
-            <!-- Icône appareil photo -->
-            <div id="bpCameraIcon" style="
-              position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
-              background:rgba(255,255,255,0.12);border:1px solid rgba(255,255,255,0.25);
-              border-radius:50%;width:44px;height:44px;
-              display:flex;align-items:center;justify-content:center;
-              font-size:1.3rem;
-              transition:all 0.3s ease;
-            ">📷</div>
-          </div>
-
-          <!-- Flash de capture -->
-          <div id="bpFlash" style="
-            position:absolute;inset:0;
-            background:white;opacity:0;
-            pointer-events:none;
-            transition:opacity 0.08s ease;
-          "></div>
-
-          <!-- Phase 2 : Analyse IA -->
-          <div id="bpAI" style="
-            position:absolute;inset:0;background:#050d17;
-            opacity:0;transition:opacity 0.5s ease;
-            display:flex;align-items:center;justify-content:center;
-            flex-direction:column;gap:1rem;
-          ">
-            <svg width="100%" height="100%" viewBox="0 0 480 300" xmlns="http://www.w3.org/2000/svg" fill="none" style="position:absolute;inset:0;">
-              <rect width="480" height="300" fill="#0a1218"/>
-              <rect x="0" y="0" width="480" height="200" fill="#0e1820"/>
-              <line x1="0" y1="65" x2="480" y2="65" stroke="rgba(200,220,240,0.05)" stroke-width="0.8"/>
-              <line x1="0" y1="130" x2="480" y2="130" stroke="rgba(200,220,240,0.05)" stroke-width="0.8"/>
-              <ellipse cx="240" cy="100" rx="38" ry="28" fill="rgba(180,160,130,0.18)" />
-              <ellipse cx="240" cy="100" rx="28" ry="20" fill="rgba(180,160,130,0.14)" />
-              <ellipse cx="233" cy="95" rx="14" ry="10" fill="rgba(170,145,115,0.22)" />
-            </svg>
-            <!-- Bounding box IA animée -->
-            <div id="bpBbox" style="
-              position:absolute;
-              border:2px solid var(--orange);
-              border-radius:3px;
-              width:100px;height:72px;
-              left:50%;top:48%;
-              transform:translate(-50%,-50%) scale(0.6);
-              opacity:0;
-              box-shadow:0 0 12px rgba(232,101,26,0.4);
-              transition:all 0.5s cubic-bezier(0.34,1.56,0.64,1);
-            "></div>
-            <!-- Scan line -->
-            <div id="bpScanLine" style="
-              position:absolute;left:50%;top:0%;width:2px;height:100%;
-              background:linear-gradient(to bottom,transparent,rgba(232,101,26,0.6),transparent);
-              transform:translateX(-50%);
-              opacity:0;
-            "></div>
-            <!-- Label IA -->
-            <div id="bpAILabel" style="
-              position:absolute;
-              left:50%;top:calc(48% + 44px);
-              transform:translateX(-50%);
-              background:var(--orange);color:#fff;
-              font-family:var(--font-mono);font-size:0.58rem;
-              letter-spacing:0.1em;padding:3px 10px;border-radius:2px;
-              opacity:0;white-space:nowrap;
-              transition:opacity 0.4s ease;
-            ">TACHE PEINTURE · 91%</div>
-            <!-- Texte analyse -->
-            <div id="bpAnalyseTxt" style="
-              position:absolute;bottom:18px;left:50%;transform:translateX(-50%);
-              font-family:var(--font-mono);font-size:0.62rem;letter-spacing:0.12em;
-              color:rgba(232,101,26,0.8);white-space:nowrap;
-              opacity:0;transition:opacity 0.4s ease;
-            ">OPRIA IA · ANALYSE EN COURS…</div>
-          </div>
-
-          <!-- Phase 3 : Formulaire réserve -->
-          <div id="bpForm" style="
-            position:absolute;inset:0;
-            background:#050d17;
-            opacity:0;transition:opacity 0.5s ease;
-            display:flex;align-items:center;justify-content:center;
-            padding:1.5rem;
-          ">
-            <div style="
-              background:#0b1a0e;
-              border:1px solid rgba(232,101,26,0.35);
-              border-radius:6px;width:100%;max-width:340px;
-              padding:1.2rem 1.4rem;
-              box-shadow:0 0 24px rgba(232,101,26,0.1);
-              font-family:var(--font-mono);
-            ">
-              <!-- Header formulaire -->
-              <div style="display:flex;align-items:center;gap:0.5rem;margin-bottom:1rem;padding-bottom:0.8rem;border-bottom:1px solid rgba(232,101,26,0.2);">
-                <span style="color:var(--orange);font-size:0.65rem;letter-spacing:0.14em;text-transform:uppercase;flex:1;">⚑ Réserve générée</span>
-                <span style="background:rgba(232,101,26,0.15);border:1px solid rgba(232,101,26,0.3);color:var(--orange);font-size:0.58rem;padding:2px 7px;border-radius:2px;">AUTO</span>
-              </div>
-              <!-- Champs -->
-              <div style="display:flex;flex-direction:column;gap:0.65rem;">
-                <div>
-                  <div style="font-size:0.55rem;letter-spacing:0.14em;color:rgba(200,223,245,0.3);text-transform:uppercase;margin-bottom:3px;">Type de défaut</div>
-                  <div id="bpF1" style="
-                    background:rgba(232,101,26,0.08);border:1px solid rgba(232,101,26,0.25);
-                    border-radius:3px;padding:5px 10px;color:var(--orange);font-size:0.7rem;
-                    opacity:0;transform:translateX(-8px);transition:all 0.35s ease;
-                  ">Tache de peinture</div>
-                </div>
-                <div>
-                  <div style="font-size:0.55rem;letter-spacing:0.14em;color:rgba(200,223,245,0.3);text-transform:uppercase;margin-bottom:3px;">Description</div>
-                  <div id="bpF2" style="
-                    background:rgba(200,223,245,0.04);border:1px solid var(--border);
-                    border-radius:3px;padding:5px 10px;color:var(--text);font-size:0.68rem;
-                    opacity:0;transform:translateX(-8px);transition:all 0.35s ease 0.1s;
-                  ">Trace de projection sur mur béton</div>
-                </div>
-                <div>
-                  <div style="font-size:0.55rem;letter-spacing:0.14em;color:rgba(200,223,245,0.3);text-transform:uppercase;margin-bottom:3px;">Assigné à</div>
-                  <div id="bpF3" style="
-                    background:rgba(200,223,245,0.04);border:1px solid var(--border);
-                    border-radius:3px;padding:5px 10px;color:var(--text);font-size:0.68rem;
-                    opacity:0;transform:translateX(-8px);transition:all 0.35s ease 0.2s;
-                  ">Sous-traitant peinture</div>
-                </div>
-                <div>
-                  <div style="font-size:0.55rem;letter-spacing:0.14em;color:rgba(200,223,245,0.3);text-transform:uppercase;margin-bottom:3px;">Localisation</div>
-                  <div id="bpF4" style="
-                    background:rgba(200,223,245,0.04);border:1px solid var(--border);
-                    border-radius:3px;padding:5px 10px;color:var(--text);font-size:0.68rem;
-                    opacity:0;transform:translateX(-8px);transition:all 0.35s ease 0.3s;
-                  ">Bureau A · Niv. 3</div>
-                </div>
-              </div>
-              <!-- Checkmark -->
-              <div id="bpCheck" style="
-                margin-top:1rem;display:flex;align-items:center;gap:0.5rem;
-                opacity:0;transition:opacity 0.4s ease;
-              ">
-                <span style="width:18px;height:18px;border-radius:50%;background:rgba(100,220,120,0.2);border:1px solid rgba(100,220,120,0.5);display:flex;align-items:center;justify-content:center;font-size:0.7rem;">✓</span>
-                <span style="font-size:0.6rem;color:rgba(100,220,120,0.8);letter-spacing:0.1em;">RÉSERVE CRÉÉE EN 0.8s</span>
-              </div>
-            </div>
-          </div>
+        <div class="blueprint-canvas">
+          <video class="hero-teaser" src="teaser.mp4" autoplay muted loop playsinline preload="metadata"></video>
         </div>
       </div>
     </div>
@@ -827,105 +575,6 @@
   </footer>
 
   <script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
-    /* ════════════════════════════════
-       ANIMATION PHOTO → RÉSERVE
-    ════════════════════════════════ */
-    (function () {
-      const photo     = document.getElementById('bpPhoto');
-      const flash     = document.getElementById('bpFlash');
-      const aiPhase   = document.getElementById('bpAI');
-      const formPhase = document.getElementById('bpForm');
-      const bbox      = document.getElementById('bpBbox');
-      const scanLine  = document.getElementById('bpScanLine');
-      const aiLabel   = document.getElementById('bpAILabel');
-      const analyseTxt= document.getElementById('bpAnalyseTxt');
-      const f1 = document.getElementById('bpF1');
-      const f2 = document.getElementById('bpF2');
-      const f3 = document.getElementById('bpF3');
-      const f4 = document.getElementById('bpF4');
-      const chk= document.getElementById('bpCheck');
-
-      function resetAll() {
-        photo.style.opacity     = '0';
-        flash.style.opacity     = '0';
-        aiPhase.style.opacity   = '0';
-        formPhase.style.opacity = '0';
-        bbox.style.opacity      = '0';
-        bbox.style.transform    = 'translate(-50%,-50%) scale(0.6)';
-        scanLine.style.opacity  = '0';
-        scanLine.style.animation= 'none';
-        aiLabel.style.opacity   = '0';
-        analyseTxt.style.opacity= '0';
-        [f1,f2,f3,f4,chk].forEach(el => {
-          el.style.opacity   = '0';
-          if (el !== chk) el.style.transform = 'translateX(-8px)';
-        });
-      }
-
-      function runCycle() {
-        resetAll();
-
-        // Phase 1 : appareil photo (0–1.8s)
-        setTimeout(() => { photo.style.opacity = '1'; }, 100);
-
-        // Shutter click + flash (1.8s)
-        setTimeout(() => {
-          flash.style.transition = 'opacity 0.08s ease';
-          flash.style.opacity    = '0.95';
-          setTimeout(() => { flash.style.opacity = '0'; }, 120);
-        }, 1800);
-
-        // Phase 2 : analyse IA (2s)
-        setTimeout(() => {
-          photo.style.opacity   = '0';
-          aiPhase.style.opacity = '1';
-
-          // Scan line sweep
-          setTimeout(() => {
-            scanLine.style.opacity   = '1';
-            scanLine.style.animation = 'scanSweep 0.9s ease-in-out forwards';
-          }, 200);
-
-          // Bounding box
-          setTimeout(() => {
-            bbox.style.opacity   = '1';
-            bbox.style.transform = 'translate(-50%,-50%) scale(1)';
-          }, 600);
-
-          // Label IA
-          setTimeout(() => { aiLabel.style.opacity = '1'; }, 1100);
-          setTimeout(() => { analyseTxt.style.opacity = '1'; }, 800);
-        }, 2000);
-
-        // Phase 3 : formulaire (4s)
-        setTimeout(() => {
-          aiPhase.style.opacity   = '0';
-          formPhase.style.opacity = '1';
-
-          setTimeout(() => { f1.style.opacity = '1'; f1.style.transform = 'translateX(0)'; }, 200);
-          setTimeout(() => { f2.style.opacity = '1'; f2.style.transform = 'translateX(0)'; }, 400);
-          setTimeout(() => { f3.style.opacity = '1'; f3.style.transform = 'translateX(0)'; }, 600);
-          setTimeout(() => { f4.style.opacity = '1'; f4.style.transform = 'translateX(0)'; }, 800);
-          setTimeout(() => { chk.style.opacity = '1'; }, 1100);
-        }, 4000);
-
-        // Pause puis loop (7.5s total)
-        setTimeout(runCycle, 7500);
-      }
-
-      // Inject scan animation keyframes
-      const style = document.createElement('style');
-      style.textContent = `
-        @keyframes scanSweep {
-          0%   { top: 0%; opacity: 1; }
-          100% { top: 100%; opacity: 0; }
-        }
-      `;
-      document.head.appendChild(style);
-
-      setTimeout(runCycle, 800);
-    })();
-
     /* ════════════════════════════════
        SCROLL REVEAL
     ════════════════════════════════ */
